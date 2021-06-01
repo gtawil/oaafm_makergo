@@ -14,6 +14,14 @@
 #define LEFT 3
 #define RIGHT 4
 
+enum SelectorDirection
+{
+    sUp,
+    sDown,
+    sLeft,
+    sRight
+};
+
 using namespace std;
 
 class Plate
@@ -34,7 +42,7 @@ public:
     void init();
 
     int initSelector();
-    int moveSelector(int direction);
+    int moveSelector(SelectorDirection direction);
     int convertSelector2Number(int selector[2]);
     int getNumberOfPosition();
 

@@ -6,16 +6,19 @@
 #include "Joystick.h"
 #include "Plate.h"
 
-#define SIMPLESWITCH 0
-#define DOUBLESWITCH 1
-#define JOYSTICKANDSWITCH 2
+enum ControlMode
+{
+    simpleswitch,
+    doubleSwitch,
+    joystickAndSwitch
+};
 
 enum MealState
 {
-    BEGINING,
-    MOUTHPOSITIONSAVING,
-    ONGOING,
-    FINISHED
+    begining,
+    mouthPositionSaving,
+    ongoing,
+    finished
 };
 
 class Meal
@@ -28,7 +31,7 @@ class Meal
         Joystick *_joystick;
         Plate *_plate;
 
-        int _controlMode;
+        ControlMode _controlMode;
 
         bool _mouthPositionSavedFlag;
         StabilizedTrajectory _servingTrajectory;

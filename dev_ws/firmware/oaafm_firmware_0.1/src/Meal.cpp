@@ -15,11 +15,11 @@ Meal::Meal( Arm *arm, Button *armSwitch, Button *userSwitch1, Button *userSwitch
 
 void Meal::init()
 {
-    _state = BEGINING;
+    _state = begining;
     _nextAction = PICKFOOD;
     _mouthPositionSavedFlag = false;
     _plate->init();
-    _controlMode=SIMPLESWITCH;
+    _controlMode=simpleswitch;
     _userSwitch1->init();
     /*
     _velocity=usingProfil->speed;
@@ -27,7 +27,7 @@ void Meal::init()
     _userSwitch2->init(usingProfil->timeShortPushed ,usingProfil->timeLongPushed);
     _joystick->init();
     */
-    if (_controlMode==JOYSTICKANDSWITCH)
+    if (_controlMode==joystickAndSwitch)
     {
         _pickingAddress = _plate->initSelector();
     }
@@ -48,17 +48,17 @@ void Meal::pickFood()
     delay(200);
     if (_plate->getPickingPositionFlag(_pickingAddress) == 1)
     {
-        this->moveWithFood(_plate->getPrePosition(_pickingAddress), -_plate->getOffset());
+        this->moveWithFood(_plate->getPrePosition(_pickingAddress), _plate->getOffset());
         delay(500);
-        this->moveWithFood(_plate->getPosition(_pickingAddress), -_plate->getOffset());
+        this->moveWithFood(_plate->getPosition(_pickingAddress), _plate->getOffset());
         delay(500);
         this->moveWithFood(_plate->getPosition(_pickingAddress), 0.0);
     }
     else if (_plate->getPickingPositionFlag(_pickingAddress) == 2)
     {
-        this->moveWithFood(_plate->getPrePosition(_pickingAddress), _plate->getOffset());
+        this->moveWithFood(_plate->getPrePosition(_pickingAddress), -_plate->getOffset());
         delay(500);
-        this->moveWithFood(_plate->getPosition(_pickingAddress), _plate->getOffset());
+        this->moveWithFood(_plate->getPosition(_pickingAddress), -_plate->getOffset());
         delay(500);
         this->moveWithFood(_plate->getPosition(_pickingAddress), 0.0);
     }
@@ -66,6 +66,7 @@ void Meal::pickFood()
     this->moveWithFood(_plate->getPrePosition(_pickingAddress), 0.0);
     delay(300);
     this->removeExcess();
+    delay(300);
 }
 
 void Meal::moveWithFood(float position[4], float offset)
@@ -123,7 +124,7 @@ void Meal::simpleSwitchSequence()
         {
             delay(1000);
             _arm->goToHome();
-            this->setMealState(FINISHED);
+            this->setMealState(finished);
         }
     }
 }
@@ -168,7 +169,7 @@ void Meal::doubleSwitchSequence()
         }
         if (flag2==LONGPUSHED)
         {
-            this->setMealState(FINISHED);
+            this->setMealState(finished);
             this->moveWithFood(transitionPosition);
         }
     }
@@ -177,37 +178,29 @@ void Meal::doubleSwitchSequence()
 void Meal::joystickAndSwitchSequence()
 {
     int flag1 = _userSwitch1->getFlag();
-    int joystickFlag = _joystick->getState();
+    JoysitckFlag joystickFlag = _joystick->getCommand();
     if (_nextAction == PICKFOOD)
     {
-        if (_joystick->isBackInMiddle())
+        switch(joystickFlag)
         {
-            switch(joystickFlag)
-            {
-                case JOYSTCIKDOWN:
-                    _pickingAddress=_plate->moveSelector(DOWN);
-                    _joystick->needToBackInMiddle();
-                    this->moveWithFood(_plate->getPrePosition(_pickingAddress));
-                    break;
-                case JOYSTCIKUP:
-                    _pickingAddress=_plate->moveSelector(UP);
-                    _joystick->needToBackInMiddle();
-                    this->moveWithFood(_plate->getPrePosition(_pickingAddress));
-                    break;
-                case JOYSTCIKLEFT:
-                    _pickingAddress=_plate->moveSelector(LEFT);
-                    _joystick->needToBackInMiddle();
-                    this->moveWithFood(_plate->getPrePosition(_pickingAddress));
-                    break;
-                case JOYSTCIKRIGHT:
-                    _pickingAddress=_plate->moveSelector(RIGHT);
-                    _joystick->needToBackInMiddle();
-                    this->moveWithFood(_plate->getPrePosition(_pickingAddress));
-                    break;
-
-                default:
-                    break;
-            }
+            case jDown:
+                _pickingAddress=_plate->moveSelector(sDown);
+                this->moveWithFood(_plate->getPrePosition(_pickingAddress));
+                break;
+            case jUp:
+                _pickingAddress=_plate->moveSelector(sUp);
+                this->moveWithFood(_plate->getPrePosition(_pickingAddress));
+                break;
+            case jLeft:
+                _pickingAddress=_plate->moveSelector(sLeft);
+                this->moveWithFood(_plate->getPrePosition(_pickingAddress));
+                break;
+            case jRight:
+                _pickingAddress=_plate->moveSelector(sRight);
+                this->moveWithFood(_plate->getPrePosition(_pickingAddress));
+                break;
+            default:
+                break;
         }
         if (flag1==SHORTPUSHED)
         {
@@ -234,7 +227,7 @@ void Meal::joystickAndSwitchSequence()
         }
         if (flag1==LONGPUSHED)
         {
-            this->setMealState(FINISHED);
+            this->setMealState(finished);
             this->moveWithFood(transitionPosition);
         }
     }
@@ -244,17 +237,18 @@ void Meal::eatingSequence()
 {
     switch (_controlMode)
     {
-        case SIMPLESWITCH:
+        case simpleswitch:
                 this->simpleSwitchSequence();
             break;
 
-        case DOUBLESWITCH:
+        case doubleSwitch:
                 this->doubleSwitchSequence();
             break;
 
-        case JOYSTICKANDSWITCH:
+        case joystickAndSwitch:
                 this->joystickAndSwitchSequence();
             break;
+            
         default :
                 this->simpleSwitchSequence();
             break;
@@ -303,7 +297,7 @@ void Meal::savingMouthPositionSequence()
             _arm->setTargetPosition(transitionPosition, FOUR);
             _arm->move(FOUR);
             _arm->waitingForReachingTarget(true);
-            this->setMealState(ONGOING);
+            this->setMealState(ongoing);
         }
     }
 }

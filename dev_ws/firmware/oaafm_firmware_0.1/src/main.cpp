@@ -396,7 +396,7 @@ void loop()
         case meal:
             switch (_currentMeal.getMealState())
             {
-                case BEGINING:
+                case begining:
                     if (_arm.isDeploy()==false)
                     {
                         #ifdef DEBUG
@@ -419,7 +419,7 @@ void loop()
                     {
                         if (_userSwitch1.getFlag() == SHORTPUSHED)
                         {
-                            _currentMeal.setMealState(MOUTHPOSITIONSAVING);
+                            _currentMeal.setMealState(mouthPositionSaving);
 
                             #ifdef DEBUG
                             Serial.println();
@@ -431,15 +431,15 @@ void loop()
                     }
                     break;
 
-                case MOUTHPOSITIONSAVING:
+                case mouthPositionSaving:
                     _currentMeal.savingMouthPositionSequence();
                     break;
 
-                case ONGOING:
+                case ongoing:
                     _currentMeal.eatingSequence();
                     break;
 
-                case FINISHED:
+                case finished:
                     #ifdef DEBUG
                     Serial.println();
                     Serial.println(F("Meal finished"));

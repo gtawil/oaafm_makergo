@@ -14,11 +14,9 @@
 #define DEBUG
 
 /*
-
--------------------------------
-PROTO ROSE CONFIG
--------------------------------
-*/
+******************************************************************************
+                        PROTOTYPE ROSE CONFIG
+******************************************************************************
 
 // Define DXL Motors communication
 #define DXL_SERIAL Serial
@@ -48,8 +46,8 @@ const float DXL_PROTOCOL_VERSION = 2.0;
 #define M_XC430_W240_T 1
 #define M_XM540_W270_T 2
 #define M_XM430_W350_T 3
-#define M_2XL430_W250_T_A 5
-#define M_2XL430_W250_T_B 4
+#define M_2XL430_W250_T_A 4
+#define M_2XL430_W250_T_B 5
 #define M_XL_320 6
 
 #define TIME_AFTER_DEBUG_MESSAGE 300
@@ -124,12 +122,15 @@ HalfPosition REMOVE_EXCESS_POSITION[3] =
     {-40.97, -81.37, -34.33, 0.0},
     {-41.37, -78.1, -38.67, 0.0}
 };
+
+*/
 
 /*
+******************************************************************************
+                        PROTOTYPE BLEU CONFIG
+******************************************************************************
+*/
 
--------------------------------
-PROTO BLEU CONFIG
--------------------------------
 
 // Define DXL Motors communication
 #define DXL_SERIAL Serial
@@ -145,7 +146,7 @@ const float DXL_PROTOCOL_VERSION = 2.0;
 #define JOYSTICK_SPEED_PIN 8
 #define JOYSTICK_DIRECTION_PIN 9
 #define JOYSTICK_REF_PIN 10
-#define JOYSTICK_THRESHOLD 40
+#define JOYSTICK_THRESHOLD 80
 
 //  Define pin used by RGB Led
 #define RED_LED_PIN 25
@@ -237,6 +238,6 @@ HalfPosition REMOVE_EXCESS_POSITION[3] =
     {-41.37, -78.1, -38.67, 0.0}
 };
 
-*/
+
 
 #endif

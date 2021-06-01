@@ -35,30 +35,33 @@ int Plate::initSelector()
     return this->convertSelector2Number(_selector2D);
 }
 
-int Plate::moveSelector(int direction)
+int Plate::moveSelector(SelectorDirection direction)
 {
     int newSelector[2]={_selector2D[0],_selector2D[1]};
     switch (direction)
     {
-    case UP:
-        newSelector[0]--;
-        newSelector[1]--;
-        break;
-    case DOWN:
-        newSelector[0]++;
-        newSelector[1]++;
-        break;
-    case LEFT:
-        newSelector[0]++;
-        newSelector[1]--;
-        break;
-    case RIGHT:
-        newSelector[0]--;
-        newSelector[1]++;
-        break;
-    default:
-        break;
+        case sUp:
+            newSelector[0]--;
+            newSelector[1]--;
+            break;
+        case sDown:
+            newSelector[0]++;
+            newSelector[1]++;
+            break;
+        case sLeft:
+            newSelector[0]++;
+            newSelector[1]--;
+            break;
+        case sRight:
+            newSelector[0]--;
+            newSelector[1]++;
+            break;
+        default:
+            break;
     }
+    Serial.println();
+    Serial.print(F("Address"));Serial.print(newSelector[0]);Serial.print(F(" & "));Serial.println(newSelector[1]);
+    Serial.println();
     if (checkIsCorrespondingToPosition(newSelector))
     {     
         _selector2D[0]=newSelector[0]; 
@@ -105,7 +108,7 @@ bool Plate::checkIsCorrespondingToPosition(int selector[2])
         if (this->getPickingPositionFlag(posAddress)!=0)
         {
             Serial.println();
-            Serial.println("            flag 0          ");
+            Serial.println(F("flag 0"));
             Serial.println();
             return true;
         }
@@ -117,7 +120,7 @@ bool Plate::checkIsCorrespondingToPosition(int selector[2])
     else
     {
         Serial.println();
-        Serial.println("            Out of the plate          ");
+        Serial.println(F("Out of the plate"));
         Serial.println();
         return false;
     }

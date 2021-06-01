@@ -4,11 +4,14 @@
 #include "Arduino.h"
 #include "Led.h"
 
-#define JOYSTCIKMIDDLE 0
-#define JOYSTCIKUP 1
-#define JOYSTCIKDOWN 2
-#define JOYSTCIKLEFT 3
-#define JOYSTCIKRIGHT 4
+enum JoysitckFlag
+{
+    jMiddle,
+    jUp,
+    jDown,
+    jLeft,
+    jRight
+};
 
 class Joystick
 {
@@ -19,8 +22,9 @@ class Joystick
         int _speed;
         int _direction;
         int _ref;
-        int _state;
-        bool _backInMiddleFlag;
+        JoysitckFlag _state;
+        JoysitckFlag _lastState;
+        JoysitckFlag _command;
         int _threshold;
         unsigned long int _timeStamp;
         Led *_led;
@@ -30,12 +34,12 @@ class Joystick
 
         void init(int threshold);
 
-        int getState();
-        bool isBackInMiddle();
-        void needToBackInMiddle();
-
-        //int calibration();
-
+        JoysitckFlag getCommand();
+        void readState();
+        /*
+        TO DO
+        int calibration();
+        */
         ~Joystick();
 };
 

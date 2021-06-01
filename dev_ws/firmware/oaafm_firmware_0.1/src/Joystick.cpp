@@ -7,15 +7,15 @@ Joystick::Joystick(int speedPin, int directionPin, int refPin, Led *led) : _spee
 
 void Joystick::init(int threshold)
 {
-    _state= JOYSTCIKMIDDLE;
+    _state= jMiddle;
+    _lastState= jMiddle;
     _speed=0;
     _direction=0;
     _ref=0;
     _threshold=threshold;
-    _backInMiddleFlag=false;
 }
 
-int Joystick::getState()
+void Joystick::readState()
 {
     _speed=analogRead(_speedPin);
     _direction=analogRead(_directionPin);
@@ -26,44 +26,49 @@ int Joystick::getState()
         {
             if (_speed>_ref)
             {
-                _led->blink(GREEN);
-                return JOYSTCIKUP;
+                _state=jUp;
             }
             else
             {
-                _led->blink(GREEN);
-                return JOYSTCIKDOWN;
+                _state=jDown;
             }
         }
         else
         {
             if (_direction>_ref)
             {
-                _led->blink(GREEN);
-                return JOYSTCIKLEFT;
+                _state=jLeft;
             }
             else
             {
-                _led->blink(GREEN);
-                return JOYSTCIKRIGHT;
+                _state=jRight;
             }
         }
     }
     else
     {
-        _backInMiddleFlag=true;
-        return JOYSTCIKMIDDLE;
+        _state=jMiddle;
     }
 }
 
-bool Joystick::isBackInMiddle()
+JoysitckFlag Joystick::getCommand()
 {
-    return _backInMiddleFlag;
-}
-
-void Joystick::needToBackInMiddle()
-{
-    _backInMiddleFlag=false;
+    this->readState();
+    if (_lastState==jMiddle)
+    {
+        _lastState=_state;
+        if (_state!=jMiddle)
+        {
+            _led->blink(GREEN);
+        }
+        return _state;
+    }
+    else
+    {
+        // nothing to return because the joystick isn't back to the middle
+        _lastState=_state;
+        return jMiddle;
+    }
 }
 
 Joystick::~Joystick()
