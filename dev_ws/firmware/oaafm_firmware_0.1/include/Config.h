@@ -32,7 +32,7 @@ const float DXL_PROTOCOL_VERSION = 2.0;
 #define JOYSTICK_SPEED_PIN 8
 #define JOYSTICK_DIRECTION_PIN 9
 #define JOYSTICK_REF_PIN 10
-#define JOYSTICK_THRESHOLD 40
+#define JOYSTICK_THRESHOLD 30
 
 //  Define pin used by RGB Led
 #define RED_LED_PIN 25
@@ -66,9 +66,9 @@ const int JOINT_LIMIT[6][2] =
 
 const float CALIBRATION_TAB[6][3] =
 {
-    {3.72, 0.0, 121.26},
-    {2, 0.0, 311.7},
-    {-4.0, -2.0, 88.26},
+    {-3.72, 0.0, 335.76},
+    {-2, 0.0, 340},
+    {4.0, 2.0, 257.66},
     {-1.0, 0.0, 179},
     {-1.0, 0.0, 179.12},
     {1, 0.0, 147}
