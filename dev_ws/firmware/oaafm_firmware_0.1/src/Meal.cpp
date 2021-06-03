@@ -19,7 +19,7 @@ void Meal::init()
     _nextAction = PICKFOOD;
     _mouthPositionSavedFlag = false;
     _plate->init();
-    _controlMode=simpleswitch;
+    _controlMode=joystickAndSwitch;
     _userSwitch1->init();
     /*
     _velocity=usingProfil->speed;
