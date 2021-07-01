@@ -35,33 +35,47 @@ int Plate::initSelector()
     return this->convertSelector2Number(_selector2D);
 }
 
-int Plate::moveSelector(SelectorDirection direction)
+int Plate::moveSelector(Direction direction)
 {
     int newSelector[2]={_selector2D[0],_selector2D[1]};
     switch (direction)
     {
-        case sUp:
+        case Up:
             newSelector[0]--;
             newSelector[1]--;
             break;
-        case sDown:
+        case UpRight:
+            newSelector[0]--;
+            break;
+        case UpLeft:
+            newSelector[1]--;
+            break;
+        case Down:
             newSelector[0]++;
             newSelector[1]++;
             break;
-        case sLeft:
+        case DownRight:
+            newSelector[1]++;
+            break;
+        case DownLeft:
+            newSelector[0]++;
+            break;
+        case Left:
             newSelector[0]++;
             newSelector[1]--;
             break;
-        case sRight:
+        case Right:
             newSelector[0]--;
             newSelector[1]++;
             break;
         default:
             break;
     }
+    /*
     Serial.println();
     Serial.print(F("Address"));Serial.print(newSelector[0]);Serial.print(F(" & "));Serial.println(newSelector[1]);
     Serial.println();
+    */
     if (checkIsCorrespondingToPosition(newSelector))
     {     
         _selector2D[0]=newSelector[0]; 
@@ -83,9 +97,13 @@ int Plate::getNumberOfPosition()
 int Plate::getNextPosition()
 {
     _selector1D++;
-    if(_selector1D>=_numberOfPosition)
+    while((this->getPickingPositionFlag(_selector1D)==0) || (_selector1D>=_numberOfPosition))
     {
-        _selector1D=0;
+        _selector1D++;
+        if(_selector1D>=_numberOfPosition)
+        {
+            _selector1D=0;
+        }
     }
     return _selector1D;
 }
@@ -93,9 +111,13 @@ int Plate::getNextPosition()
 int Plate::getPreviousPosition()
 {
     _selector1D--;
-    if(_selector1D<0)
+    while((this->getPickingPositionFlag(_selector1D)==0) || (_selector1D<0))
     {
-        _selector1D=_numberOfPosition-1;
+        _selector1D--;
+        if(_selector1D<0)
+        {
+            _selector1D=_numberOfPosition-1;
+        }
     }
     return _selector1D;
 }
@@ -105,12 +127,12 @@ bool Plate::checkIsCorrespondingToPosition(int selector[2])
     if (((selector[0] >= 0) && (selector[0] < _numberOfLine) && (selector[1] >= 0) && (selector[1] < _numberOfColumn))==true)
     {
         int posAddress=this->convertSelector2Number(selector);
-        if (this->getPickingPositionFlag(posAddress)!=0)
+        if (this->getPickingPositionFlag(posAddress)==0)
         {
             Serial.println();
             Serial.println(F("flag 0"));
             Serial.println();
-            return true;
+            return false;
         }
         else
         {

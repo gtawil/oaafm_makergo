@@ -7,8 +7,8 @@ Joystick::Joystick(int speedPin, int directionPin, int refPin, Led *led) : _spee
 
 void Joystick::init(int threshold)
 {
-    _state= jMiddle;
-    _lastState= jMiddle;
+    _state= Middle;
+    _lastState= Middle;
     _speed=0;
     _direction=0;
     _ref=0;
@@ -17,47 +17,80 @@ void Joystick::init(int threshold)
 
 void Joystick::readState()
 {
+    delay(50);
     _speed=analogRead(_speedPin);
     _direction=analogRead(_directionPin);
     _ref=analogRead(_refPin);
-    if ((abs(_speed-_ref)>_threshold) ^ (abs(_direction-_ref)>_threshold))
+    if (((abs(_speed-_ref)>_threshold) || (abs(_direction-_ref)>_threshold))==true)
     {
-        if (abs(_speed-_ref)>_threshold)
+        if (((abs(_speed-_ref)>_threshold) && (abs(_direction-_ref)>_threshold))==true)
         {
             if (_speed>_ref)
             {
-                _state=jUp;
+                if (_direction>_ref)
+                {
+                    _state=UpRight;
+                }
+                else
+                {
+                    _state=UpLeft;   
+                }
             }
             else
             {
-                _state=jDown;
+                if (_direction>_ref)
+                {
+                    _state=DownRight;
+                }
+                else
+                {
+                    _state=DownLeft;   
+                }
             }
         }
         else
         {
-            if (_direction>_ref)
+            if (abs(_speed-_ref)>_threshold)
             {
-                _state=jRight;
+                if (_speed>_ref)
+                {
+                    _state=Up;   
+                }
+                else
+                {
+                    _state=Down;
+                }
+            }
+            else if (abs(_direction-_ref)>_threshold)
+            {
+                if (_direction>_ref)
+                {
+                    _state=Right;
+                }
+                else
+                {
+                    _state=Left;
+                }
             }
             else
             {
-                _state=jLeft;
+                _state=Middle;
             }
-        }
+        }      
     }
     else
     {
-        _state=jMiddle;
+        _state=Middle;
     }
 }
 
-JoysitckFlag Joystick::getCommand()
+Direction Joystick::getCommand()
 {
     this->readState();
-    if (_lastState==jMiddle)
+    if (_lastState==Middle)
     {
         _lastState=_state;
-        if (_state!=jMiddle)
+        if (_state!=Middle)
         {
             _led->blink(GREEN);
         }
@@ -67,7 +100,7 @@ JoysitckFlag Joystick::getCommand()
     {
         // nothing to return because the joystick isn't back to the middle
         _lastState=_state;
-        return jMiddle;
+        return Middle;
     }
 }
 

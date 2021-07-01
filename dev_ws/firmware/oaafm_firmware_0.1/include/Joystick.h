@@ -4,13 +4,17 @@
 #include "Arduino.h"
 #include "Led.h"
 
-enum JoysitckFlag
+enum Direction
 {
-    jMiddle,
-    jUp,
-    jDown,
-    jLeft,
-    jRight
+    Middle,
+    Up,
+    UpRight,
+    UpLeft,
+    Down,
+    DownRight,
+    DownLeft,
+    Left,
+    Right
 };
 
 class Joystick
@@ -22,9 +26,9 @@ class Joystick
         int _speed;
         int _direction;
         int _ref;
-        JoysitckFlag _state;
-        JoysitckFlag _lastState;
-        JoysitckFlag _command;
+        Direction _state;
+        Direction _lastState;
+        Direction _command;
         int _threshold;
         unsigned long int _timeStamp;
         Led *_led;
@@ -34,7 +38,7 @@ class Joystick
 
         void init(int threshold);
 
-        JoysitckFlag getCommand();
+        Direction getCommand();
         void readState();
         /*
         TO DO

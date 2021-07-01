@@ -8,19 +8,7 @@
 #include "Trajectory.h"
 #include "StabilizedTrajectory.h"
 #include "Position.h"
-
-#define UP 1
-#define DOWN 2
-#define LEFT 3
-#define RIGHT 4
-
-enum SelectorDirection
-{
-    sUp,
-    sDown,
-    sLeft,
-    sRight
-};
+#include "Joystick.h"
 
 using namespace std;
 
@@ -42,7 +30,7 @@ public:
     void init();
 
     int initSelector();
-    int moveSelector(SelectorDirection direction);
+    int moveSelector(Direction direction);
     int convertSelector2Number(int selector[2]);
     int getNumberOfPosition();
 

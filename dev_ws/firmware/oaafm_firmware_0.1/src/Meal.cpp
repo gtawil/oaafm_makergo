@@ -178,29 +178,13 @@ void Meal::doubleSwitchSequence()
 void Meal::joystickAndSwitchSequence()
 {
     int flag1 = _userSwitch1->getFlag();
-    JoysitckFlag joystickFlag = _joystick->getCommand();
+    Direction joystickFlag = _joystick->getCommand();
     if (_nextAction == PICKFOOD)
     {
-        switch(joystickFlag)
+        if (joystickFlag!=Middle)
         {
-            case jDown:
-                _pickingAddress=_plate->moveSelector(sDown);
-                this->moveWithFood(_plate->getPrePosition(_pickingAddress));
-                break;
-            case jUp:
-                _pickingAddress=_plate->moveSelector(sUp);
-                this->moveWithFood(_plate->getPrePosition(_pickingAddress));
-                break;
-            case jLeft:
-                _pickingAddress=_plate->moveSelector(sLeft);
-                this->moveWithFood(_plate->getPrePosition(_pickingAddress));
-                break;
-            case jRight:
-                _pickingAddress=_plate->moveSelector(sRight);
-                this->moveWithFood(_plate->getPrePosition(_pickingAddress));
-                break;
-            default:
-                break;
+            _pickingAddress=_plate->moveSelector(joystickFlag);
+            this->moveWithFood(_plate->getPrePosition(_pickingAddress));
         }
         if (flag1==SHORTPUSHED)
         {
