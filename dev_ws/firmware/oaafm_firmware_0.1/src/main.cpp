@@ -17,6 +17,7 @@
 #include <Dynamixel2Arduino.h>
 #include "Meal.h"
 #include "Led.h"
+#include "AppCommunication.h"
 
 /**
  * -------------------------------
@@ -74,6 +75,8 @@ Button _userSwitch2(USER_SWITCH2_PIN, &_led);
  * @return userSwitch2
  */
 Joystick _userJoystick(JOYSTICK_SPEED_PIN, JOYSTICK_DIRECTION_PIN, JOYSTICK_REF_PIN, &_led);
+
+AppCommunication app(&BT_SERIAL, &_led);
 
 /**
  * @brief Create the serial communication with actuator
