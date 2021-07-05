@@ -2,10 +2,12 @@
 #define AppCommunication_h
 
 #include <ArduinoSTL.h>
+#include "Arduino.h"
 #include <queue>
 #include <iterator>
 #include <string>
 #include <serstream>
+#include "Led.h"
 
 #define LISTEN 1
 #define SPEAK 2
@@ -56,6 +58,8 @@ public:
   UsingProfil *getProfil();
 
   void readBluetoothData();
+
+  bool messageIsWaiting();
 
   ~AppCommunication();
 };

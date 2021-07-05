@@ -131,6 +131,18 @@ void AppCommunication::nextMessage()
     _messageNumber--;
 }
 
+bool AppCommunication::messageIsWaiting()
+{
+    if (_messageList.empty())
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
 
 UsingProfil *AppCommunication::getProfil()
 {
