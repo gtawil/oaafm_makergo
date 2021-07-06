@@ -8,7 +8,7 @@
 
 enum ControlMode
 {
-    simpleswitch,
+    simpleSwitch,
     doubleSwitch,
     joystickAndSwitch
 };

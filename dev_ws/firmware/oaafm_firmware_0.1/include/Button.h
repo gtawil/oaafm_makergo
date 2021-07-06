@@ -8,7 +8,7 @@
 #define SHORTPUSHED 1
 #define LONGPUSHED 10
 
-#define PUSHEDTIMEGAP 700
+#define PUSHEDTIMEGAP 900
 #define SHORTTIME 200
 
 class Button

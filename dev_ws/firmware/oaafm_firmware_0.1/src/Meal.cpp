@@ -120,12 +120,6 @@ void Meal::simpleSwitchSequence()
             _pickingAddress=_plate->getNextPosition();
             _nextAction = SERVICE;
         }
-        else if (_nextAction == PICKFOOD)
-        {
-            delay(1000);
-            _arm->goToHome();
-            this->setMealState(finished);
-        }
     }
 }
 
@@ -167,11 +161,6 @@ void Meal::doubleSwitchSequence()
             this->moveWithFood(_plate->getPrePosition(_pickingAddress));
             _nextAction = PICKFOOD;
         }
-        if (flag2==LONGPUSHED)
-        {
-            this->setMealState(finished);
-            this->moveWithFood(transitionPosition);
-        }
     }
 }
 
@@ -209,11 +198,6 @@ void Meal::joystickAndSwitchSequence()
             this->moveWithFood(_plate->getPrePosition(_pickingAddress));
             _nextAction = PICKFOOD;
         }
-        if (flag1==LONGPUSHED)
-        {
-            this->setMealState(finished);
-            this->moveWithFood(transitionPosition);
-        }
     }
 }
 
@@ -221,7 +205,7 @@ void Meal::eatingSequence()
 {
     switch (_controlMode)
     {
-        case simpleswitch:
+        case simpleSwitch:
                 this->simpleSwitchSequence();
             break;
 
