@@ -259,9 +259,11 @@ void Meal::savingMouthPositionSequence()
     {
         if (_mouthPositionSavedFlag)
         {
+            /*
             Serial.println();
             Serial.println(F("Position Validated"));
             Serial.println();
+            */
             _arm->setTargetPosition(transitionPosition, FOUR);
             _arm->move(FOUR);
             _arm->waitingForReachingTarget(true);
@@ -280,6 +282,7 @@ void Meal::setServingTrajectory(float mouthPositon[6])
     _servingTrajectory = StabilizedTrajectory();
     _servingTrajectory.addPosition(transitionPosition);
     _servingTrajectory.addPosition(position);
+    _servingTrajectory.setEpsilon()
 }
 
 Meal::~Meal()
