@@ -44,6 +44,7 @@ private:
 public:
   AppCommunication(HardwareSerial *_serial, Led *led);
   void init();
+  void connection();
   bool isConnected();
   int getState();
 

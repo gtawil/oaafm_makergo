@@ -12,9 +12,13 @@ void AppCommunication::init()
     _message=appMessage();
     _message.label="";
     _message.value=0;
+
+}
+
+void AppCommunication::connection()
+{
     while (this->isConnected() == false)
     {
-        this->readBluetoothData();
         if (this->getMessageLabel() == "connected")
         {
             if (this->getMessageValue()==1)
@@ -83,6 +87,9 @@ void AppCommunication::readBluetoothData()
             {
                 *separator = 0;
                 _message.label= command;
+                ++separator;
+                _message.value=atoi(separator);
+                /*
                 if (_message.label== "usingProfil")
                 {
                     ++separator;
@@ -109,17 +116,13 @@ void AppCommunication::readBluetoothData()
                 }
                 else
                 {
-                    ++separator;
-                    _message.value=atoi(separator);
-                }
+                    
+                }*/
                 
             }
             // Find the next command in input string
             command = strtok(0, "&");
-            Serial.println("message dans liste");
             _messageList.push(_message);
-            _messageNumber++;
-            Serial.println("lit ...");
         }
     }
 }
@@ -128,7 +131,6 @@ void AppCommunication::readBluetoothData()
 void AppCommunication::nextMessage()
 {
     _messageList.pop();
-    _messageNumber--;
 }
 
 bool AppCommunication::messageIsWaiting()

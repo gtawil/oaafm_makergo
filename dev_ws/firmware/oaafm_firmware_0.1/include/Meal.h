@@ -8,7 +8,7 @@
 
 enum ControlMode
 {
-    simpleswitch,
+    simpleSwitch,
     doubleSwitch,
     joystickAndSwitch
 };
@@ -43,7 +43,7 @@ class Meal
     public:
         Meal(Arm *arm, Button *armSwitch, Button *userSwitch1, Button *userSwitch2, Joystick *joystick, Plate *plate1);
 
-        void init();
+        void init(ControlMode mode);
 
         void moveWithFood(float position[4], float offset = 0.0);
         void removeExcess();

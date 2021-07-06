@@ -11,21 +11,19 @@ float transitionPosition[4] = {0, -110.0, -30.0, -40.0};
 Meal::Meal( Arm *arm, Button *armSwitch, Button *userSwitch1, Button *userSwitch2, Joystick *joystick, Plate *plate1) :  _arm(arm), _armSwitch(armSwitch), _userSwitch1(userSwitch1), _userSwitch2(userSwitch2), _joystick(joystick), _plate(plate1)
 {
     _servingTrajectory = StabilizedTrajectory();
+    _state = begining;
 }
 
-void Meal::init()
+void Meal::init(ControlMode mode)
 {
-    _state = begining;
     _nextAction = PICKFOOD;
     _mouthPositionSavedFlag = false;
     _plate->init();
-    _controlMode=joystickAndSwitch;
-    _userSwitch1->init();
+    _controlMode=mode;
     /*
     _velocity=usingProfil->speed;
     _userSwitch1->init(usingProfil->timeShortPushed ,usingProfil->timeLongPushed);
     _userSwitch2->init(usingProfil->timeShortPushed ,usingProfil->timeLongPushed);
-    _joystick->init();
     */
     if (_controlMode==joystickAndSwitch)
     {
@@ -221,7 +219,7 @@ void Meal::eatingSequence()
 {
     switch (_controlMode)
     {
-        case simpleswitch:
+        case simpleSwitch:
                 this->simpleSwitchSequence();
             break;
 

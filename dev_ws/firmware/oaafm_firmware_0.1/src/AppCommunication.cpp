@@ -38,26 +38,12 @@ bool AppCommunication::isConnected()
 
 String AppCommunication::getMessageLabel()
 {
-    if (_messageNumber!=0)
-    {
-        return _messageList.front().label;
-    }
-    else
-    {
-        return "";
-    }
+    return _messageList.front().label;
 }
 
 int AppCommunication::getMessageValue()
 {
-    if (_messageNumber!=0)
-    {
-        return _messageList.front().value;
-    }
-    else
-    {
-        return 0;
-    }
+    return _messageList.front().value;
 }
 
 void AppCommunication::readBluetoothData()
@@ -105,6 +91,7 @@ void AppCommunication::readBluetoothData()
                     _usingProfil.timeLongPushed = atoi(separator);
                     Serial.println();
                     Serial.println(_usingProfil.timeLongPushed);
+                    
                     _message.value=_usingProfil.mode; //a delete apres
                 }
                 else
@@ -116,10 +103,9 @@ void AppCommunication::readBluetoothData()
             }
             // Find the next command in input string
             command = strtok(0, "&");
-            Serial.println("message dans liste");
+            Serial.println();
+            Serial.println(F("new message"));
             _messageList.push(_message);
-            _messageNumber++;
-            Serial.println("lit ...");
         }
     }
 }
@@ -128,7 +114,6 @@ void AppCommunication::readBluetoothData()
 void AppCommunication::nextMessage()
 {
     _messageList.pop();
-    _messageNumber--;
 }
 
 bool AppCommunication::messageIsWaiting()

@@ -76,7 +76,7 @@ Button _userSwitch2(USER_SWITCH2_PIN, &_led);
  */
 Joystick _userJoystick(JOYSTICK_SPEED_PIN, JOYSTICK_DIRECTION_PIN, JOYSTICK_REF_PIN, &_led);
 
-AppCommunication app(&BT_SERIAL, &_led);
+AppCommunication _app(&BT_SERIAL, &_led);
 
 /**
  * @brief Create the serial communication with actuator
@@ -140,6 +140,7 @@ Meal _currentMeal(&_arm, &_armSwitch, &_userSwitch1, &_userSwitch2, &_userJoysti
  */
 enum Mode
 {
+    starting,
     home,
     meal,
     calibration,
@@ -147,8 +148,8 @@ enum Mode
     powerOff,
     nothing
 };
-Mode _mode;
-Mode modeSelector;
+Mode _mode=starting;
+Mode modeSelector=nothing;
 /**
  * Variable to be sure about the security
  * 
@@ -179,8 +180,6 @@ void interruptUserSwitch2()
 
 void setup()
 {
-
-    modeSelector=meal;
     
     /**
      * ---------------------------------
@@ -212,6 +211,28 @@ void setup()
     Serial.println();
     delay(TIME_AFTER_DEBUG_MESSAGE);
     #endif
+
+    /**
+     * ---------------------------------
+     *      Security Checkup
+     * ---------------------------------
+     */
+    #ifdef DEBUG
+    Serial.println();
+    Serial.println(F("Connect w app"));
+    Serial.println();
+    delay(TIME_AFTER_DEBUG_MESSAGE);
+    #endif
+
+    _app.init();
+
+    #ifdef DEBUG
+    Serial.println();
+    Serial.println(F("Connected"));
+    Serial.println();
+    delay(TIME_AFTER_DEBUG_MESSAGE);
+    #endif
+
 
     /**
      * ---------------------------------
@@ -315,13 +336,42 @@ void setup()
     else
     {
         _arm.turnTorqueOn(ALL);
-        modeSelector=meal;
+        #ifdef DEBUG
+        Serial.println();
+        Serial.println(F("Arm will be deployed"));
+        Serial.println();
+        delay(TIME_AFTER_DEBUG_MESSAGE);
+        #endif
+        delay(2000);
+        _arm.deploy();
+        while (_app.messageIsWaiting()==false)
+        {
+            _app.readBluetoothData();
+            delay(500);
+        }
+        if (_app.getMessageLabel() == "deployed")
+        {
+            _app.nextMessage();
+        }
+        else
+        {
+            #ifdef DEBUG
+            Serial.println();
+            Serial.println(F("ERROR"));
+            Serial.println();
+            delay(TIME_AFTER_DEBUG_MESSAGE);
+            #endif
+            _arm.turnTorqueOff(ALL);
+            modeSelector=powerOff;
+        }
+        
     }
-
     _led.blink(GREEN);
     delay(1000);
     _led.blink(GREEN);
-    
+
+
+    delay(30000); //pour test
 }
 
 void loop()
@@ -333,62 +383,55 @@ void loop()
          * -------------------
          */
         case home:
-            switch (modeSelector)
+            if (_app.messageIsWaiting())
             {
-                case meal:
-                    #ifdef DEBUG
-                    Serial.println();
-                    Serial.println(F("Meal"));
-                    Serial.println();
-                    delay(TIME_AFTER_DEBUG_MESSAGE);
-                    #endif
+                if (_app.getMessageLabel() == "home")
+                {
+                    switch (_app.getMessageValue())
+                    {
+                        case 2:
+                            #ifdef DEBUG
+                            Serial.println();
+                            Serial.println(F("Meal"));
+                            Serial.println();
+                            delay(TIME_AFTER_DEBUG_MESSAGE);
+                            #endif
 
-                    _currentMeal.init();
-                    _mode=meal;
-                    modeSelector=nothing;
-                    
-                    break;
+                            _mode=meal;
+                            _currentMeal.setMealState(begining);
+                            break;
 
-                case calibration:
-                    #ifdef DEBUG
-                    Serial.println();
-                    Serial.println(F("Calibration"));
-                    Serial.println();
-                    delay(TIME_AFTER_DEBUG_MESSAGE);
-                    #endif
+                        case 3:
+                            #ifdef DEBUG
+                            Serial.println();
+                            Serial.println(F("Calibration"));
+                            Serial.println();
+                            delay(TIME_AFTER_DEBUG_MESSAGE);
+                            #endif
 
-                    _arm.initCalibration();
+                            _arm.initCalibration();
 
-                    #ifdef DEBUG
-                    Serial.println();
-                    Serial.println(F("Ready for Calibration"));
-                    Serial.println();
-                    delay(TIME_AFTER_DEBUG_MESSAGE);
-                    #endif
+                            #ifdef DEBUG
+                            Serial.println();
+                            Serial.println(F("Ready for Calibration"));
+                            Serial.println();
+                            delay(TIME_AFTER_DEBUG_MESSAGE);
+                            #endif
 
-                    _mode=calibration;
-                    modeSelector=nothing;
-                    break;
-
-                case test:
-                    #ifdef DEBUG
-                    Serial.println();
-                    Serial.println(F("Test"));
-                    Serial.println();
-                    delay(TIME_AFTER_DEBUG_MESSAGE);
-                    #endif
-
-                    _mode=test;
-                    modeSelector=nothing;
-                    break;
-
-                case powerOff:
+                            _mode=calibration;
+                            break;
+                        
+                        default:
+                            _mode=home;
+                            break;
+                    }
+                }
+                if (_app.getMessageLabel() == "off")
+                {
+                    _arm.turnTorqueOff(ALL);
                     _led.turnOn(RED);
                     _mode=powerOff;
-                    break;
-                
-                default:
-                    break;
+                }
             }
             break;
 
@@ -400,33 +443,48 @@ void loop()
             switch (_currentMeal.getMealState())
             {
                 case begining:
-                    if (_arm.isDeploy()==false)
+                    if (_app.messageIsWaiting())
                     {
-                        #ifdef DEBUG
-                        Serial.println();
-                        Serial.println(F("Arm will be deployed"));
-                        Serial.println();
-                        delay(TIME_AFTER_DEBUG_MESSAGE);
-                        #endif
-                        delay(1000);
-                        _arm.deploy();
-
-                        #ifdef DEBUG
-                        Serial.println();
-                        Serial.println(F("Deployed the arm & press userSwitch1"));
-                        Serial.println();
-                        delay(TIME_AFTER_DEBUG_MESSAGE);
-                        #endif
-                    }
-                    else
-                    {
-                        if (_userSwitch1.getFlag() == SHORTPUSHED)
+                        if (_app.getMessageLabel() == "usingProfil")
                         {
-                            _currentMeal.setMealState(mouthPositionSaving);
+                            switch (_app.getMessageValue())
+                            {
+                                case 1:
+                                    _currentMeal.init(simpleSwitch);
+                                    _userSwitch1.init();
+                                    _currentMeal.setMealState(mouthPositionSaving);
+                                    break;
 
+                                case 2:
+                                    _currentMeal.init(doubleSwitch);
+                                    _userSwitch1.init();
+                                    _userSwitch2.init();
+                                    _currentMeal.setMealState(mouthPositionSaving);
+                                    break;
+
+                                case 3:
+                                    _currentMeal.init(joystickAndSwitch);
+                                    _userSwitch1.init();
+                                    _userJoystick.init(JOYSTICK_THRESHOLD);
+                                    _currentMeal.setMealState(mouthPositionSaving);
+                                    break;
+                                
+                                default:
+                                    #ifdef DEBUG
+                                    Serial.println();
+                                    Serial.println(F("ERROR"));
+                                    Serial.println();
+                                    delay(TIME_AFTER_DEBUG_MESSAGE);
+                                    #endif
+                                    break;
+                            }
+                            _app.nextMessage();
+                        }
+                        else
+                        {  
                             #ifdef DEBUG
                             Serial.println();
-                            Serial.println(F("Save mouth position"));
+                            Serial.println(F("ERROR"));
                             Serial.println();
                             delay(TIME_AFTER_DEBUG_MESSAGE);
                             #endif
@@ -436,10 +494,44 @@ void loop()
 
                 case mouthPositionSaving:
                     _currentMeal.savingMouthPositionSequence();
+                    if (_app.messageIsWaiting())
+                    {
+                        if (_app.getMessageLabel() == "positionValidated")
+                        {
+                            _currentMeal.setMealState(ongoing);
+                            _app.nextMessage();
+                        }
+                        else
+                        {  
+                            #ifdef DEBUG
+                            Serial.println();
+                            Serial.println(F("ERROR"));
+                            Serial.println();
+                            delay(TIME_AFTER_DEBUG_MESSAGE);
+                            #endif
+                        }
+                    }
                     break;
 
                 case ongoing:
                     _currentMeal.eatingSequence();
+                    if (_app.messageIsWaiting())
+                    {
+                        if (_app.getMessageLabel() == "home")
+                        {
+                            _currentMeal.setMealState(finished);
+                            _app.nextMessage();
+                        }
+                        else
+                        {  
+                            #ifdef DEBUG
+                            Serial.println();
+                            Serial.println(F("ERROR"));
+                            Serial.println();
+                            delay(TIME_AFTER_DEBUG_MESSAGE);
+                            #endif
+                        }
+                    }
                     break;
 
                 case finished:
@@ -449,8 +541,8 @@ void loop()
                     Serial.println();
                     delay(TIME_AFTER_DEBUG_MESSAGE);
                     #endif
+                    _arm.goToHome();
                     _mode=home;
-                    modeSelector=powerOff;
                     break;
 
                 default:
@@ -463,6 +555,7 @@ void loop()
          * -------------------
          */
         case calibration:
+            // TO DO **********
             if (calibrationFlag==true)
             {
                 #ifdef DEBUG
@@ -473,7 +566,6 @@ void loop()
                 #endif
 
                 _mode=home;
-                modeSelector=powerOff;
                 //_arm.goToHome();
                 //_mode=meal;
                 //_currentMeal.init();
