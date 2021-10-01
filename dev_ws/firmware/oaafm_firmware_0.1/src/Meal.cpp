@@ -280,6 +280,7 @@ void Meal::setServingTrajectory(float mouthPositon[6])
     _servingTrajectory = StabilizedTrajectory();
     _servingTrajectory.addPosition(transitionPosition);
     _servingTrajectory.addPosition(position);
+    _servingTrajectory.setEpsilon(EPSILON);
 }
 
 Meal::~Meal()
