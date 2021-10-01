@@ -242,7 +242,7 @@ void setup()
     #endif
 
     //  Arm initialisation 
-    _arm.init(3, JOINT_LIMIT, CALIBRATION_TAB);
+    _arm.init(4, JOINT_LIMIT, CALIBRATION_TAB);
 
     #ifdef DEBUG
     Serial.println();
@@ -341,6 +341,7 @@ void loop()
                     #endif
 
                     _currentMeal.init();
+                    _userJoystick.init(JOYSTICK_THRESHOLD);
                     _mode=meal;
                     modeSelector=nothing;
                     

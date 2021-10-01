@@ -288,7 +288,7 @@ void Arm::moveWithTrajectory(StabilizedTrajectory *trajectory)
 bool Arm::waitingForReachingTarget(bool stabilization)
 {
     delay(500);
-    while (this->isReached(8) == false)
+    while (this->isReached(8) == false)//mettre 8, 10 pour proto rouge
     {
         this->move(ALL);
         if (this->isMoving())
